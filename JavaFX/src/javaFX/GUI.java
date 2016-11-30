@@ -26,6 +26,7 @@ public class GUI extends Application {
     @Override
     public void start(Stage primaryStage) {
         try {
+            // Code to get MAC, IP and Host name for computer
             InetAddress inetAddress = InetAddress.getLocalHost();
             NetworkInterface network = NetworkInterface.getByInetAddress(inetAddress);
             byte[] mac = network.getHardwareAddress();
@@ -43,6 +44,7 @@ public class GUI extends Application {
             Label welcomeLabel = new Label();
             welcomeLabel.setText("Welcome " + ipAddress);
 
+            // Create a gridpane to display everything and put padding round everything
             root = new GridPane();
             root.setAlignment(Pos.CENTER);
             root.add(welcomeLabel, 1, 0);
@@ -50,6 +52,7 @@ public class GUI extends Application {
             root.setHgap(10);
             root.setVgap(10);
             
+            // Create some desks and add a rectangle to seperate them apart (otherwise could skip more rows)
             ArrayList<Desk> desks = new ArrayList<>();
             int counter = 0;
             for (int i = 3; i < 10; i++) {
@@ -67,6 +70,7 @@ public class GUI extends Application {
                 }
             }
 
+            // Book some of the desks
             desks.get(0).setBooked(true);
             desks.get(0).setBookee("Emma Archibald");
             desks.get(1).setBooked(true);
@@ -76,6 +80,9 @@ public class GUI extends Application {
             desks.get(4).setBooked(true);
             desks.get(4).setBookee("Elliot Jenkins");
 
+            // Loop round the desks and create the buttons for them
+            // Used buttons to display windows rather than rectangles as couldn't
+            // work out how to add text onto them.
             for (Desk desk : desks) {
                 Button newButton = createDeskButton(desk);
                 root.add(newButton, desk.getColumn(), desk.getRow());
@@ -97,6 +104,7 @@ public class GUI extends Application {
         }
     }
 
+    // Launch comes from inheritance, has nothing to do with me
     public static void main(String[] args) {
         launch(args);
     }
@@ -114,9 +122,11 @@ public class GUI extends Application {
         Font font = new Font("Arial", 12);
         button.setFont(font);
 
+        // Create a rectangle to display the text tooltip on
         Rectangle rect = new Rectangle(0, 0, 100, 100);
         String toolTipText = "";
 
+        // Choose what colour to make the button
         if (desk.isBooked()) {
             button.setStyle("-fx-background-color:#ED1C24;");
             toolTipText = "Sorry the desk is booked.";
@@ -129,8 +139,10 @@ public class GUI extends Application {
         Tooltip.install(rect, tt);
         button.setTooltip(tt);
 
+        // If a desk is booked then don't make it change colour on mouse hover
         if (!desk.isBooked()) {
             button.setOnMouseEntered((MouseEvent t) -> {
+                // Make it red, can be any hex code for colours, (RGB values in hex)
                 button.setStyle("-fx-background-color:#ED1C24;");
             });
 
@@ -139,6 +151,7 @@ public class GUI extends Application {
             });
         }
 
+        // For now just display the desk name, simples!
         button.setOnAction((ActionEvent event) -> {
             System.out.println(desk.getName());
         });
