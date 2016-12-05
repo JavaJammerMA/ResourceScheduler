@@ -1,4 +1,5 @@
 
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -19,51 +20,61 @@ public class HibernateManager {
             factory = new Configuration()
                     .configure("hibernate.cfg.xml")
                     .addAnnotatedClass(Employee.class)
+                    .addAnnotatedClass(Reservations.class)
+                    .addAnnotatedClass(Resources.class)
                     .buildSessionFactory();
         } catch (Exception ex) {
             throw new ExceptionInInitializerError(ex);
         }
 
         HibernateManager hbManager = new HibernateManager();
-        
-        // Example adding an employee to the table
-        boolean addEmployee = hbManager.addEmployee(new Employee("firstNameHere", "lastNameHere", "email@address.com","MAC","phoneNumber"));
-        if(addEmployee){
-            System.out.println("Successflly addded employee to the system");
-        } else {
-            System.out.println("Failed to add an employee to the system");
-        }
-        
+
+//        // Example adding an employee to the table
+//        boolean addEmployee = hbManager.addEmployee(new Employee("firstNameHere", "lastNameHere", "email@address.com", "MAC", "phoneNumber"));
+//        if (addEmployee) {
+//            System.out.println("Successflly addded employee to the system");
+//        } else {
+//            System.out.println("Failed to add an employee to the system");
+//        }
+
         // Example removing an employee from the table
-        int id = 4; // This cannot ever be the same
-        boolean removeEmployee = hbManager.removeEmployee(id);
-        if(removeEmployee){
-            System.out.println("Successfully removed " + id);            
-        } else {
-            System.out.println("Failed to remove " + id);
-        }
-        
-        // Example displaying employees
-        List<Employee> employees = hbManager.getEmployees();
-        for(Employee e : employees){
-            System.out.println(e.getFirstName() + " " + e.getLastName());
-        }
+//        int id = 4; // This cannot ever be the same
+//        boolean removeEmployee = hbManager.removeEmployee(id);
+//        if(removeEmployee){
+//            System.out.println("Successfully removed " + id);            
+//        } else {
+//            System.out.println("Failed to remove " + id);
+//        }
+//        // Example displaying employees
+//        List<Employee> employees = hbManager.getEmployees();
+//        for (Employee e : employees) {
+//            System.out.println(e.getFirstName() + " " + e.getLastName());
+//        }
+
+
+        hbManager.addResource(new Resources("Desk 1"));
+        hbManager.addReservation(new Reservations(0, new Date(05,12,16), "5"));
+
         factory.close();
     }
 
     /**
      * Method to add an employee to the employee_table within the database
-     * @param employee  The employee that you would like to add
+     *
+     * @param employee The employee that you would like to add
      * @return boolean whether the operation was successful
      */
     public boolean addEmployee(Employee employee) {
+        Session session = null;
         try {
-            Session session = factory.getCurrentSession();
+            session = factory.getCurrentSession();
             session.beginTransaction();
             session.save(employee);
             session.getTransaction().commit();
             session.close();
         } catch (Exception ex) {
+            session.close();
+
             return false;
         }
         return true;
@@ -71,6 +82,7 @@ public class HibernateManager {
 
     /**
      * Method to remove an employee from the employee_table within the database
+     *
      * @param EmployeeID The ID of the employee that you wish to remove
      * @return boolean whether the operation was successful
      */
@@ -96,6 +108,7 @@ public class HibernateManager {
 
     /**
      * Method to get a list of all of the employees in the employee_table
+     *
      * @return a List of Employees
      */
     public List<Employee> getEmployees() {
@@ -116,5 +129,37 @@ public class HibernateManager {
             session.close();
             return null;
         }
+    }
+
+    public boolean addReservation(Reservations reservation) {
+        Session session = null;
+        try {
+            session = factory.getCurrentSession();
+            session.beginTransaction();
+            session.save(reservation);
+            session.getTransaction().commit();
+            session.close();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            session.close();
+            return false;
+        }
+        return true;
+    }
+    
+    public boolean addResource(Resources resource) {
+        Session session = null;
+        try {
+            session = factory.getCurrentSession();
+            session.beginTransaction();
+            session.save(resource);
+            session.getTransaction().commit();
+            session.close();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            session.close();
+            return false;
+        }
+        return true;
     }
 }
