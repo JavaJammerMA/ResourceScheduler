@@ -16,17 +16,7 @@ public class HibernateManager {
     private static SessionFactory factory;
 
     public static void main(String[] args) {
-        try {
-            factory = new Configuration()
-                    .configure("hibernate.cfg.xml")
-                    .addAnnotatedClass(Employee.class)
-                    .addAnnotatedClass(Reservations.class)
-                    .addAnnotatedClass(Resources.class)
-                    .buildSessionFactory();
-        } catch (Exception ex) {
-            throw new ExceptionInInitializerError(ex);
-        }
-
+        factory = CustomSessionFactory.getInstance();
         HibernateManager hbManager = new HibernateManager();
 
 //        // Example adding an employee to the table
@@ -36,7 +26,6 @@ public class HibernateManager {
 //        } else {
 //            System.out.println("Failed to add an employee to the system");
 //        }
-
         // Example removing an employee from the table
 //        int id = 4; // This cannot ever be the same
 //        boolean removeEmployee = hbManager.removeEmployee(id);
@@ -50,12 +39,9 @@ public class HibernateManager {
 //        for (Employee e : employees) {
 //            System.out.println(e.getFirstName() + " " + e.getLastName());
 //        }
+        hbManager.addResource(new Resources("Desk 2"));
+        hbManager.addReservation(new Reservations(1, new Date(05, 12, 16), "5"));
 
-
-        hbManager.addResource(new Resources("Desk 1"));
-        hbManager.addReservation(new Reservations(0, new Date(05,12,16), "5"));
-
-        factory.close();
     }
 
     /**
@@ -87,7 +73,7 @@ public class HibernateManager {
      * @return boolean whether the operation was successful
      */
     public boolean removeEmployee(int EmployeeID) {
-        Session session = factory.openSession();
+        Session session = factory.getCurrentSession();
         Transaction tx = null;
         try {
             tx = session.beginTransaction();
@@ -112,7 +98,7 @@ public class HibernateManager {
      * @return a List of Employees
      */
     public List<Employee> getEmployees() {
-        Session session = factory.openSession();
+        Session session = factory.getCurrentSession();
         Transaction tx = null;
         try {
             tx = session.beginTransaction();
@@ -146,7 +132,7 @@ public class HibernateManager {
         }
         return true;
     }
-    
+
     public boolean addResource(Resources resource) {
         Session session = null;
         try {

@@ -1,21 +1,22 @@
 import java.io.Serializable;
 import java.sql.Date;
-import java.time.LocalDate;
+import java.util.Set;
 
 import javax.persistence.Column;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "reservation_table")
+@Table(name = "reservation")
 public class Reservations implements Serializable {
     @Id
     @Column(name = "Reservation_ID")
     private int reservationID;    
-    @Column(name = "Resource_ID")
-    private Integer resourceID = null;
+    @OneToMany(mappedBy = "Resource_ID")
+    private Set<Integer> resourceID = null;
     @Column(name = "Date")
     private Date date;
     @Column(name = "Time_Slot")
